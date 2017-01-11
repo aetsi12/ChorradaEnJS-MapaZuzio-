@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>COCOSA</title>
+    <style>
+        #game{
+            position: relative;
+            width: 384px;
+            height: 384px;
+            background-image: url("img/background.png");
+        }
+        .cell{
+            display: block;
+            position: absolute;
+            width: 64px;
+            height: 64px;
+        }
+        p{
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game"></div>
+    <p id="output"></p>
+    <script type="text/javascript">
+        //REFERENCIAS
+        var game = document.querySelector('#game');
+        var output = document.querySelector('#output');
+        //MAPA
+        var map = [
+            [0, 2, 0, 0, 0, 3],
+            [0, 0, 0, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 0],
+            [0, 2, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+        ];
+        //GAME OBJECTS (el player)
+        var gameObjects = [
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [4, 0, 0, 0, 0, 0],
+        ];
+        //Codigo mapa
+        var NADA = 0;
+        var BUENO = 1;
+        var MALO = 2;
+        var META = 3;
+        var PLAYER = 4;
+        //Filas y columnas
+        var ROWS = map.length;
+        var COLUMNS = map[0].length;
+        //Posicionar player dinamicamente
+        var shipRow = -1;
+        var shipCol = -1;
+        for (var row = 0; row < ROWS; row++) {
+            for (var col = 0; col < COLUMNS; col++) {
+                if (gameObjects[row][col] === PLAYER) {
+                    shipCol = col;
+                    shipRow = row;
+                }
+            }
+        }
+        console.log(shipCol);
+        //Tamaño de cada célula
+        var cellSize = 64;
+        //Inputs
+        window.addEventListener("keydown", keydownHandler, false);
+        var UP = 38;
+        var DOWN = 40;
+        var RIGHT = 39;
+        var LEFT = 37;
+        render();
+
+        function render() {
+            limpiar();
+            //Renderizar el game por un loop en arrays
+            for (var row = 0; row < ROWS; row++) {
+                for (var col = 0; col < COLUMNS; col++) {
+                    var cell = crearCelula(row, col);
+                    crearPlayer(row, col, cell);
+                    //POSICIONAR LA CÉLULA
+                    cell.style.top = row * cellSize + "px";
+                    cell.style.left = col * cellSize + "px";
+                }
+            }
+        }
+
+        function limpiar() {
+            //Limpiar game de img tag cell del turno anterior
+            if (game.hasChildNodes()) {
+                for (var i = 0; i < ROWS * COLUMNS; i++) {
+                    game.removeChild(game.firstChild);
+                }
+            }
+        }
+
+        function crearCelula(row, col) {
+            var cell = document.createElement("img"); //Crear img y guardarla en cell
+            cell.setAttribute("class", "cell"); //Su clase de CSS = cell
+            game.appendChild(cell); //Lo metemos dentro de el div "game"
+            //IMAGEN CORRECTA
+            switch (map[row][col]) {
+                case NADA:
+                    cell.src = "img/nada.png";
+                    break;
+                case BUENO:
+                    cell.src = "img/bueno.png";
+                    break;
+                case MALO:
+                    cell.src = "img/malo.png";
+                    break;
+                case META:
+                    cell.src = "img/meta.png";
+                    break;
+            }
+            return cell;
+        }
+
+        function crearPlayer(row, col, cell) {
+            //Añadir player
+            switch (gameObjects[row][col]) {
+                case PLAYER:
+                    cell.src = "img/player.png";
+                    break;
+            }
+        }
+
+        function keydownHandler(event) {
+            switch (event.keyCode) {
+                case UP:
+                    if (shipRow > 0) { //Entones puede moverse hacia arriba
+                        gameObjects[shipRow][shipCol] = 0; //Vaciamos la celula en la que estaba
+                        shipRow--; //Subimos de columna!
+                        gameObjects[shipRow][shipCol] = PLAYER; //La nueva posición es tuya, barquito
+                    }
+                    break;
+                case DOWN:
+                    if (shipRow < ROWS - 1) { //Entones puede moverse hacia abajo
+                        gameObjects[shipRow][shipCol] = 0; //Vaciamos la celula en la que estaba
+                        shipRow++; //Subimos de columna!
+                        gameObjects[shipRow][shipCol] = PLAYER; //La nueva posición es tuya, barquito
+                    }
+                    break;
+                case LEFT:
+                    if (shipCol > 0) { //Entones puede moverse hacia arriba
+                        gameObjects[shipRow][shipCol] = 0; //Vaciamos la celula en la que estaba
+                        shipCol--; //Subimos de columna!
+                        gameObjects[shipRow][shipCol] = PLAYER; //La nueva posición es tuya, barquito
+                    }
+                    break;
+                case RIGHT:
+                    if (shipCol < COLUMNS - 1) { //Entones puede moverse hacia arriba
+                        gameObjects[shipRow][shipCol] = 0; //Vaciamos la celula en la que estaba
+                        shipCol++; //Subimos de columna!
+                        gameObjects[shipRow][shipCol] = PLAYER; //La nueva posición es tuya, barquito
+                    }
+                    break;
+            }
+            render();
+            switch (map[shipRow][shipCol]) {
+                case NADA:
+                    console.log("nada");
+                    break;
+                case MALO:
+                    console.log("malo");
+                    break;
+                case BUENO:
+                    console.log("bueno");
+                    break;
+                case META:
+                    console.log("meta");
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
