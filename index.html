@@ -163,21 +163,25 @@
                     }
                     break;
             }
-            render();
+
             switch (map[shipRow][shipCol]) {
                 case NADA:
                     console.log("nada");
+                    map[shipRow][shipCol] = 0;
                     break;
                 case MALO:
                     console.log("malo");
+                    map[shipRow][shipCol] = 0;
                     break;
                 case BUENO:
                     console.log("bueno");
+                    map[shipRow][shipCol] = 0;
                     break;
                 case META:
                     console.log("meta");
                     break;
             }
+            render();
         }
     </script>
 </body>
